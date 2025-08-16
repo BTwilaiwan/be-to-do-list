@@ -25,6 +25,7 @@ exports.createTask = async (req, res) => {
         response.message = 'Task Code is duplicate.'
         return response;
     }
+    const findPriority = await db.collection('priority').findOne({ priority: req.priority });
 
     const newTask = {
         _id: req.taskCode,
@@ -33,7 +34,7 @@ exports.createTask = async (req, res) => {
         dueDate: formatDateOnly(req.dueDate),
         status: req.status,
         priority: req.priority,
-        priorityId: req.priorityId,
+        priorityId: findPriority.priorityId,
         createdDate: formatDateOnly(),
         updatedDate: formatDateOnly()
     };
