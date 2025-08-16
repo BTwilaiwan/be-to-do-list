@@ -15,9 +15,15 @@ exports.createTask = async (req, res) => {
   try {
     const db = getDB();
     const connectTask = db.collection('tasks');
+    const response = {
+        statusCode: 200,
+        message: ''
+    }
     const findId = await connectTask.findOne({ _id: req.taskCode });
     if (findId) {
-        return { message: "Task Code is duplicate." } ;
+        response.statusCode = 500,
+        response.message = 'Task Code is duplicate.'
+        return response;
     }
 
     const newTask = {
@@ -31,11 +37,32 @@ exports.createTask = async (req, res) => {
         createdDate: formatDateOnly(),
         updatedDate: formatDateOnly()
     };
-    const respose = await connectTask.insertOne(newTask);
-    return respose;
+    const resCreate = await connectTask.insertOne(newTask);
+    return resCreate;
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
 
 
+exports.deleteTaskById = async (req, res) => { 
+    try {
+        const db = getDB();
+        const taskCode = req.params.taskCode;
+        const response = {
+            statusCode: 200,
+            message: ''
+        }
+        const result = await db.collection('tasks').deleteOne({ _id: taskCode });
+        if (result?.deletedCount) {
+            response.statusCode = 200,
+            response.message = "Task deleted successfully"
+        } else {
+            response.statusCode = 404,
+            response.message = "Task not found."
+        }
+        return response
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+}
