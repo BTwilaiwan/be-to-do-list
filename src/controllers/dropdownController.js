@@ -7,7 +7,7 @@ exports.getStatus = async (req, res) => {
     const response = new apiResponse("Success", result);
     res.status(200).json(response);
   } catch (error) {
-    const response = new apiResponse("Error", error);
+    const response = new apiResponse("Error", error.message);
     res.status(500).json(response);
   }
 };
@@ -18,7 +18,7 @@ exports.getPriority = async (req, res) => {
     const response = new apiResponse("Success", result);
     res.status(200).json(response);
   } catch (error) {
-    const response = new apiResponse("Error", error);
+    const response = new apiResponse("Error", error.message);
     res.status(500).json(response);
   }
 };
