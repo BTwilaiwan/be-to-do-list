@@ -47,3 +47,37 @@ exports.deleteTaskById = async (req, res) => {
     res.status(500).json(response);
   }
 };
+
+exports.updateTask = async (req, res) => {
+  try {
+    const result = await taskService.updateTask(req);
+     if (result?.statusCode === 500) {
+      const response = new apiResponse("Error", result?.message);
+      res.status(500).json(response);
+    } else {
+      const response = new apiResponse("Success", result?.message);
+      res.status(200).json(response);
+    }
+    
+  } catch (error) {
+    const response = new apiResponse("Error", error.message);
+    res.status(500).json(response);
+  }
+};
+
+exports.updateStatus = async (req, res) => {
+  try {
+    const result = await taskService.updateStatus(req);
+     if (result?.statusCode === 500) {
+      const response = new apiResponse("Error", result?.message);
+      res.status(500).json(response);
+    } else {
+      const response = new apiResponse("Success", result?.message);
+      res.status(200).json(response);
+    }
+    
+  } catch (error) {
+    const response = new apiResponse("Error", error.message);
+    res.status(500).json(response);
+  }
+};

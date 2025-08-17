@@ -56,11 +56,72 @@ exports.deleteTaskById = async (req, res) => {
         }
         const result = await db.collection('tasks').deleteOne({ _id: taskCode });
         if (result?.deletedCount) {
-            response.statusCode = 200,
-            response.message = "Task deleted successfully"
+            response.statusCode = 200;
+            response.message = "Task deleted successfully";
         } else {
-            response.statusCode = 404,
-            response.message = "Task not found."
+            response.statusCode = 404;
+            response.message = "Task not found.";
+        }
+        return response
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+}
+
+exports.updateStatus = async (req, res) => { 
+    try {
+        const db = getDB();
+        const taskcode = req.body.map(item => item._id);
+        const response = {
+            statusCode: 200,
+            message: ''
+        }
+        const result = await db.collection('tasks').updateMany(
+            { _id: { $in: taskcode } },
+            { $set: { 
+                status: 'Completed', 
+                updatedDate: formatDateOnly() 
+            } } 
+        );
+         if (result.modifiedCount > 0) {
+            response.statusCode = 200;
+            response.message = `${result.modifiedCount} tasks updated successfully`;
+        } else {
+            response.statusCode = 404;
+            response.message = "Task not found.";
+        }
+        return response
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+}
+
+exports.updateTask = async (req, res) => { 
+    try {
+        const db = getDB();
+        const taskCode = req.params.taskCode;
+        const data = req.body;  
+        const response = {
+            statusCode: 200,
+            message: ''
+        }
+        const findPriority = await db.collection('priority').findOne({ priority: data.priority });
+        const result = await db.collection('tasks').updateOne(
+            { _id: taskCode },
+            {
+                $set: { 
+                    ...data, 
+                    priorityId: findPriority.priorityId,
+                    updatedDate: formatDateOnly() 
+                } 
+            }
+        );
+        if (result.modifiedCount > 0) {
+            response.statusCode = 200;
+            response.message = "Task updated successfully";
+        } else {
+            response.statusCode = 404;
+            response.message = "Task not found.";
         }
         return response
     } catch (err) {

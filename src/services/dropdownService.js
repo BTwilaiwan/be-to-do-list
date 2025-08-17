@@ -3,7 +3,7 @@ const { getDB } = require('../config/database');
 exports.getStatus = async (req, res) => { 
     try {
         const db = getDB();
-        const resStatus = await db.collection('status').find({ status: { $ne: "Done" } }).toArray();
+        const resStatus = await db.collection('status').find({ status: { $ne: "Completed" } }).toArray();
         return resStatus;
     } catch (err) {
         res.status(500).json({ message: err.message });
